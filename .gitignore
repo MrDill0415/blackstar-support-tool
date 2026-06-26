@@ -1,0 +1,9 @@
+node_modules/
+out/
+dist/
+.webpack/
+*.log
+logs/
+.env
+.DS_Store
+Thumbs.db

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self';
+                 connect-src 'self' ws: wss:;
+                 style-src 'self' 'unsafe-inline';
+                 img-src 'self' data:;
+                 media-src 'self' mediastream: blob:;">
+  <title>Blackstar Support Tool</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- ── Header ──────────────────────────────────────────────────────── -->
+    <header id="header">
+      <div class="header-left">
+        <!-- Custom logo: place logo.png in src/renderer/assets/ -->
+        <img class="logo-icon" src="assets/logo.png" width="32" height="32"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <!-- Fallback inline SVG star -->
+        <svg class="logo-icon" viewBox="0 0 100 100" width="32" height="32" style="display:none">
+          <defs>
+            <linearGradient id="star-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#7b2ff7"/>
+              <stop offset="100%" stop-color="#00b4d8"/>
+            </linearGradient>
+          </defs>
+          <path d="M50 5 L61 38 L95 38 L68 59 L79 92 L50 72 L21 92 L32 59 L5 38 L39 38 Z"
+                fill="url(#star-grad)"/>
+        </svg>
+        <span class="header-title">BLACKSTAR</span>
+      </div>
+      <div class="header-right">
+        <div id="session-badge" class="badge hidden">
+          <span class="pulse-dot"></span>
+          <span id="badge-text">SESSION ACTIVE</span>
+        </div>
+        <button id="btn-settings" class="icon-btn" title="Settings">&#9881;</button>
+      </div>
+    </header>
+
+    <!-- ── Screen: Home ────────────────────────────────────────────────── -->
+    <section id="screen-home" class="screen active">
+      <div class="hero">
+        <!-- Custom hero logo: place logo.png in src/renderer/assets/ -->
+        <img class="hero-logo" src="assets/logo.png" width="80" height="80"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <!-- Fallback SVG -->
+        <svg class="hero-logo" viewBox="0 0 100 100" width="80" height="80" style="display:none">
+          <defs>
+            <linearGradient id="star-grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#7b2ff7"/>
+              <stop offset="100%" stop-color="#00b4d8"/>
+            </linearGradient>
+          </defs>
+          <path d="M50 5 L61 38 L95 38 L68 59 L79 92 L50 72 L21 92 L32 59 L5 38 L39 38 Z"
+                fill="url(#star-grad2)"/>
+        </svg>
+        <h1>Blackstar Support Tool</h1>
+        <p class="subtitle">Secure remote technical support</p>
+      </div>
+
+      <div class="card-row">
+        <button class="role-card" id="btn-request">
+          <div class="card-icon">&#128221;</div>
+          <h2>Request Support</h2>
+          <p>Get help from a technician by sharing a session code</p>
+        </button>
+        <button class="role-card" id="btn-provide">
+          <div class="card-icon">&#128295;</div>
+          <h2>Provide Support</h2>
+          <p>Connect to a user's computer using their session code</p>
+        </button>
+      </div>
+    </section>
+
+    <!-- ── Screen: Request Support ─────────────────────────────────────── -->
+    <section id="screen-request" class="screen">
+      <button class="back-btn" data-back>&larr; Back</button>
+      <div class="center-panel">
+        <h2>Your Session Code</h2>
+        <div class="code-display">
+          <span id="session-code">--------</span>
+          <button id="btn-copy-code" class="small-btn" title="Copy code">&#128203;</button>
+        </div>
+        <p class="hint">Share this code with your technician to start a session.</p>
+
+        <div id="request-status" class="status-line">
+          <span class="spinner"></span>
+          <span>Connecting to server&hellip;</span>
+        </div>
+
+        <button id="btn-cancel-request" class="danger-btn">Cancel</button>
+      </div>
+    </section>
+
+    <!-- ── Screen: Provide Support ─────────────────────────────────────── -->
+    <section id="screen-provide" class="screen">
+      <button class="back-btn" data-back>&larr; Back</button>
+      <div class="center-panel">
+        <h2>Connect to Session</h2>
+
+        <label class="field-label" for="tech-name">Your Name</label>
+        <input type="text" id="tech-name" placeholder="e.g. John Smith" maxlength="40" autocomplete="off">
+
+        <label class="field-label" for="tech-code">Session Code</label>
+        <input type="text" id="tech-code" placeholder="XXXX-XXXX" maxlength="9"
+               autocomplete="off" spellcheck="false" style="text-transform:uppercase">
+
+        <div id="provide-status" class="status-line hidden"></div>
+
+        <button id="btn-connect" class="primary-btn">Connect</button>
+      </div>
+    </section>
+
+    <!-- ── Screen: Active Session – Requester ──────────────────────────── -->
+    <section id="screen-session-requester" class="screen">
+      <div class="session-header active-glow">
+        <span class="pulse-dot"></span>
+        <span class="session-label">SESSION ACTIVE</span>
+        <span id="req-timer" class="timer">00:00:00</span>
+      </div>
+      <div class="center-panel">
+        <div class="info-card">
+          <p><strong>Connected to:</strong> <span id="req-tech-name">—</span></p>
+          <p><strong>Status:</strong> <span id="req-status">Screen sharing active</span></p>
+        </div>
+        <div class="notice">
+          A technician can see and control your screen.<br>
+          <strong>Move your mouse or press a key to temporarily take back control.</strong>
+        </div>
+        <button id="btn-end-requester" class="danger-btn">End Session</button>
+      </div>
+    </section>
+
+    <!-- ── Screen: Active Session – Technician (Remote Viewer) ─────────── -->
+    <section id="screen-session-technician" class="screen">
+      <div class="viewer-toolbar">
+        <div class="toolbar-left">
+          <span class="pulse-dot"></span>
+          <span id="tech-remote-name">Connected</span>
+          <span id="tech-timer" class="timer">00:00:00</span>
+        </div>
+        <div class="toolbar-right">
+          <button id="btn-fullscreen" class="small-btn" title="Toggle fullscreen">&#x26F6;</button>
+          <button id="btn-end-technician" class="danger-btn small">End Session</button>
+        </div>
+      </div>
+      <div id="viewer-container">
+        <video id="remote-video" autoplay playsinline></video>
+        <div id="viewer-overlay" class="hidden">
+          <p>Waiting for screen stream&hellip;</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Modal: Approval Dialog ──────────────────────────────────────── -->
+    <div id="modal-approval" class="modal hidden">
+      <div class="modal-backdrop"></div>
+      <div class="modal-box">
+        <h2>Connection Request</h2>
+        <div class="modal-icon">&#128100;</div>
+        <p><strong id="approval-name">Technician</strong><br>wants to connect to your computer for remote support.</p>
+        <div class="modal-actions">
+          <button id="btn-approve" class="primary-btn">Allow</button>
+          <button id="btn-deny" class="danger-btn">Deny</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Modal: Settings ─────────────────────────────────────────────── -->
+    <div id="modal-settings" class="modal hidden">
+      <div class="modal-backdrop" data-close-settings></div>
+      <div class="modal-box">
+        <h2>Settings</h2>
+
+        <label class="field-label" for="server-url">Signaling Server</label>
+        <input type="text" id="server-url" placeholder="ws://localhost:3456" autocomplete="off">
+
+        <div class="setting-row">
+          <label class="field-label">Embedded Server</label>
+          <button id="btn-toggle-server" class="small-btn">Start Server</button>
+          <span id="server-status" class="status-dot offline"></span>
+        </div>
+
+        <div class="modal-actions">
+          <button id="btn-save-settings" class="primary-btn">Save</button>
+          <button id="btn-close-settings" class="ghost-btn">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Toast container ─────────────────────────────────────────────── -->
+    <div id="toast-container"></div>
+  </div>
+
+  <script src="snowflakes.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

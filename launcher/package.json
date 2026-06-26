@@ -1,0 +1,43 @@
+{
+  "name": "blackstar-launcher",
+  "productName": "Blackstar Launcher",
+  "version": "1.0.0",
+  "description": "Launcher for Blackstar Support Tool",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {
+        "name": "Blackstar Launcher",
+        "executableName": "BlackstarLauncher",
+        "asar": true
+      },
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "BlackstarLauncher",
+            "setupExe": "BlackstarLauncher-Setup.exe"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": ["win32"]
+        }
+      ]
+    }
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.1"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.6.0",
+    "@electron-forge/maker-squirrel": "^7.6.0",
+    "@electron-forge/maker-zip": "^7.6.0",
+    "electron": "^32.0.0"
+  }
+}

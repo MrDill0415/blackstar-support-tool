@@ -1,0 +1,34 @@
+{
+  "name": "blackstar-support-tool",
+  "productName": "Blackstar Support Tool",
+  "version": "1.0.0",
+  "description": "Secure remote technical support tool with session-based access control",
+  "main": "src/main/index.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "server": "node src/server/signaling-server.js"
+  },
+  "config": {
+    "forge": "./forge.config.cjs"
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.1",
+    "gh": "^2.8.9",
+    "koffi": "^2.9.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.6.0",
+    "@electron-forge/maker-squirrel": "^7.6.0",
+    "@electron-forge/maker-zip": "^7.6.0",
+    "electron": "^32.0.0"
+  },
+  "keywords": [
+    "remote-support",
+    "remote-desktop",
+    "electron"
+  ],
+  "license": "MIT"
+}
